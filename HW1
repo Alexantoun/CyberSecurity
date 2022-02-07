@@ -1,0 +1,16 @@
+#!/bin/bash
+if  [[ $1 == -a ]]; then
+    echo Automatic run
+else
+    echo "Welcome, Please select from the following options"
+    echo "1: do something"
+    echo "2: do something else"
+    echo "3: Decrypt a file"
+    read response
+    if [[ $response == 3 ]]; then
+        echo "would you like to export decrypted file?(y/n): "
+        read response
+        if [[ $response == "y" ]] || [[ $response == "Y"]]; then
+            
+
+fi
