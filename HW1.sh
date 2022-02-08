@@ -3,18 +3,28 @@
 if  [[ $1 == -a ]]; then
     echo "Automatic run for the crontab"
 elif [[ $1 == -f ]]; then
-    echo "Forced to encrypt directory"
-    cd ~/Desktop/EncryptMe
-    gpg -e *.txt
-    mv  *.txt.gpg ~/Documents/CyberSecurity/theTest.txt 
-    cd ~/Documents/CyberSecurity
+    echo "Immediate file encryption of directory"
+    echo "If you can read me you have failed" > ~/Desktop/EncryptMe/test.txt
+    #cd ~/Desktop/EncryptMe
+    gpg -o ~/Documents/CyberSecurity/encrypted.txt -e -r DropBox ~/Desktop/EncryptMe/*.txt 
+    #cd ~/Documents/CyberSecurity
 elif [[ $1 == -i ]]; then
     echo "********************Fix me******************"
-    cd ~/Desktop
-    mkdir EncryptMe
-    cd ~/Documents/CyberSecurity
+    echo "This is for an initial setup"
+    echo "First a new public/private key pairing must be set"
+    gpg --quick-generate-key DropBox [1[1024[0]]]
+    gpg --export -a > theKey.pub
+    gpg --import theKey.pub
+    rm theKey.pub
 
-    pwd
+    echo "*****Creating a desktop location to drop off files*****"
+    if [[ -d ~/Desktop/EncryptMe ]]; then  
+        echo "Directory Exists"
+    else
+        mkdir ~/Desktop/EncryptMe
+    fi
+
+    cd ~/Documents/CyberSecurity
     ##read -p "enter encryption folder location and name: " usrInput
     ##touch location.txt
     ##echo "~/$usrInput" > location.txt
@@ -23,7 +33,7 @@ elif [[ $1 == -i ]]; then
 else
     echo "Welcome, Please select from the following options"
     echo "1: Change Keys"
-    echo "2: do something else"
+    echo "2: Delete Encryption keys"
     echo "3: Decrypt a file"
     read response
     if [[ $response == 1 ]]; then
