@@ -16,7 +16,10 @@ elif [[ $1 == -i ]]; then
     gpg --export -a > theKey.pub
     gpg --import theKey.pub
     rm theKey.pub
-
+    read -p "Please enter the dropbox location":  location
+    echo "~/$location" > systemInfo.txt
+    location2=$(cat systemInfo.txt | grep [location])
+    echo "$location2"
     echo "*****Creating a desktop location to drop off files*****"
     if [[ -d ~/Desktop/EncryptMe ]]; then  
         echo "Directory Exists"
