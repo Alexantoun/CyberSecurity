@@ -3,31 +3,37 @@
 if  [[ $1 == -a ]]; then
     echo "Automatic run for the crontab"
 elif [[ $1 == -f ]]; then
+    location=$(cat systemInfo.txt | grep location | cut -c 10-)
+    echo "*********************************looking for $location"
     echo "Immediate file encryption of directory"
-    echo "If you can read me you have failed" > ~/Desktop/EncryptMe/test.txt
-    #cd ~/Desktop/EncryptMe
-    gpg -o ~/Documents/CyberSecurity/encrypted.txt -e -r DropBox ~/Desktop/EncryptMe/*.txt 
-    #cd ~/Documents/CyberSecurity
+    echo "If you can read me you have failed" > ~/"$location"/DropBox/test.txt
+    gpg -o ~/Documents/CyberSecurity/EncryptedFiles/encrypted.txt -e -r DropBox ~/"$location"/DropBox/test.txt
+    #rm  ~/"$location"/DropBox/test.txt
 elif [[ $1 == -i ]]; then
-    echo "********************Fix me******************"
     echo "This is for an initial setup"
     echo "First a new public/private key pairing must be set"
     gpg --quick-generate-key DropBox [1[1024[0]]]
     gpg --export -a > theKey.pub
     gpg --import theKey.pub
     rm theKey.pub
-    read -p "Please enter the dropbox location starting from ~/"  location
-    echo "$location" > systemInfo.txt
-    location2=$(cat systemInfo.txt | grep [location])
+    read -p "Please enter the dropbox location: ~/" location
+    echo "location $location" > systemInfo.txt
+    location2=$(cat systemInfo.txt | grep location | cut -c 10-)
     echo "$location2"
-    echo "*****Creating a location to drop off files*****"
     if [[ -d ~"$location2" ]]; then  
         echo "Directory Exists"
     else
         mkdir ~/"$location2"/DropBox
         echo "Created dropbox in ~/$location2"
     fi
+    if [[ -d "EncryptedFiles" ]]; then
+        echo "Encryption directory exists"
+    else
+        mkdir EncryptedFiles
+    fi
+
 else
+    clear
     echo "Welcome, Please select from the following options"
     echo "1: Change Keys"
     echo "2: Delete Encryption keys"
