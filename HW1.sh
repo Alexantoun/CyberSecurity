@@ -4,11 +4,10 @@ if  [[ $1 == -a ]]; then
     echo "Automatic run for the crontab"
 elif [[ $1 == -f ]]; then
     location=$(cat systemInfo.txt | grep location | cut -c 10-)
-    echo "*********************************looking for $location"
     echo "Immediate file encryption of directory"
     echo "If you can read me you have failed" > ~/"$location"/DropBox/test.txt
     gpg -o ~/Documents/CyberSecurity/EncryptedFiles/encrypted.txt -e -r DropBox ~/"$location"/DropBox/test.txt
-    #rm  ~/"$location"/DropBox/test.txt
+    rm  ~/"$location"/DropBox/test.txt
 elif [[ $1 == -i ]]; then
     echo "This is for an initial setup"
     echo "First a new public/private key pairing must be set"
@@ -42,13 +41,18 @@ else
     if [[ $response == 1 ]]; then
         echo "You have chosen to Change the encryption/decryption keys"
     elif [[ $response == 3 ]]; then
-        echo -n "would you like to export decrypted file?(y/n): "
-        read response
-        if [[ $response == 'y' || $response == 'Y' ]]; then
-            echo "You have chosen: $response"
+        read -p "Enter the file name as fileName.ext: " response
+
+        if ! [[ -d DecryptedFiles ]]; then
+            echo "Making \"DecryptedFiles\" Directory"
+            mkdir DecryptedFiles
+        fi
+        if [[ -e EncryptedFiles/"$response" ]]; then
+            gpg -o DecryptedFiles/"$response" -d EncryptedFiles/"$response"
         else
-            echo "You have not chose 'y'"
-        fi 
+            echo "File not found"
+        fi
+        echo "File decrypted in DecryptedFiles Directory"
     fi
 
 fi
