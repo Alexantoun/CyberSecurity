@@ -8,6 +8,6 @@ At this stage im still developing a way to force the encryption of the dropbox
 
 "DropBox" is a placeholder name
 
-14th of February 2022
+14th of February 2022:--
 Can now decrypt a specified file by taking the file name from the user and then storing to a directory called
 DecryptedFiles -- will work on allowing the user to specify location of decryption
