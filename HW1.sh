@@ -20,7 +20,7 @@ elif [[ $1 == -i ]]; then
         rm theKey.pub
     else
         echo "DropBox Key already exists"
-        sleep 1
+        sleep 3
     fi 
 
     read -p "Please enter the dropbox location: ~/" location
