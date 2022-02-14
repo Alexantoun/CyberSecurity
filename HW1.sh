@@ -10,11 +10,19 @@ elif [[ $1 == -f ]]; then
     rm  ~/"$location"/DropBox/test.txt
 elif [[ $1 == -i ]]; then
     echo "This is for an initial setup"
-    echo "First a new public/private key pairing must be set"
-    gpg --quick-generate-key DropBox [1[1024[0]]]
-    gpg --export -a > theKey.pub
-    gpg --import theKey.pub
-    rm theKey.pub
+    existance=$(gpg --list-keys | grep DropBox) 
+    if ! [[ $existance ]]; then
+        echo "Need to generate a new Public/Private key pairing"
+        sleep 3
+        gpg --quick-generate-key DropBox [1[1024[0]]]
+        gpg --export -a > theKey.pub
+        gpg --import theKey.pub
+        rm theKey.pub
+    else
+        echo "DropBox Key already exists"
+        sleep 1
+    fi 
+
     read -p "Please enter the dropbox location: ~/" location
     echo "location $location" > systemInfo.txt
     location2=$(cat systemInfo.txt | grep location | cut -c 10-)
