@@ -11,3 +11,7 @@ At this stage im still developing a way to force the encryption of the dropbox
 14th of February 2022:--
 Can now decrypt a specified file by taking the file name from the user and then storing to a directory called
 DecryptedFiles -- will work on allowing the user to specify location of decryption
+
+forced encryption will now encrypt the entire directory, and move them to the encryption location 
+
+Added a way to choose the destination of the decrypted files but still no way to decrypt the entirety of the encrypted directory 
