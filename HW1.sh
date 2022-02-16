@@ -1,5 +1,21 @@
 #!/bin/bash
 ##you still need to make the generation of keys manual
+
+function decryptDirectory(){
+    location=$(cat systemInfo.txt | grep destination | cut -c 13-)
+    cd EncryptedFiles
+    read -p "Please enter Decryption key" key
+    for fileName in *; do   
+        echo "$fileName is encrypted"
+        cat "$fileName"
+        echo ""
+        echo key | gpg --output ~/"$location"/DecryptedFiles/"$fileName" -d "$fileName" 
+        rm "$fileName"
+        clear
+        echo "All files decrypted and placed into ~/$location"
+    done
+}
+
 if  [[ $1 == -a ]]; then
     echo "Automatic run for the crontab"
 elif [[ $1 == -f ]]; then
@@ -18,7 +34,7 @@ elif [[ $1 == -i ]]; then
     existance=$(gpg --list-keys | grep DropBox) 
     if ! [[ $existance ]]; then
         echo "Need to generate a new Public/Private key pairing"
-        sleep 3
+        sleep 1.5
         gpg --quick-generate-key DropBox [1[1024[0]]]
         gpg --export -a > theKey.pub
         gpg --import theKey.pub
@@ -50,7 +66,6 @@ elif [[ $1 == -i ]]; then
     else
         mkdir ~/"$location"/DecryptedFiles
         echo "destination $location" >> systemInfo.txt
-
     fi
 
 else
@@ -59,6 +74,7 @@ else
     echo "1: Change Keys"
     echo "2: Delete Encryption keys"
     echo "3: Decrypt a file"
+    echo "4: Decrypt All files"
     read response
     if [[ $response == 1 ]]; then
         echo "You have chosen to Change the encryption/decryption keys"
@@ -76,6 +92,7 @@ else
         else
             echo "Decryption location not set"
         fi
-
+    elif [[ $response == 4 ]]; then
+        decryptDirectory
     fi
 fi
