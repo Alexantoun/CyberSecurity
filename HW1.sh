@@ -16,42 +16,48 @@ function decryptDirectory(){
     done
 }
 
-if  [[ $1 == -a ]]; then
-    echo "Automatic run for the crontab"
-elif [[ $1 == -f ]]; then
-    echo "Encrypting entirety of dropbox"
-    sleep 1
+function encryptDirectory(){
     location=$(cat systemInfo.txt | grep location | cut -c 10-)
-    cd ~/"$location"/DropBox
-    for fileName in *;do   
-        gpg -o ~/Documents/CyberSecurity/EncryptedFiles/"$fileName" -e -r DropBox "$fileName"
-        rm  ~/"$location"/DropBox/"$fileName"
-        echo "encrypted $fileName";
-    done
+        cd ~/"$location"/DropBox
+        for fileName in *;do   
+            gpg -o ~/Documents/CyberSecurity/EncryptedFiles/"$fileName" -e "$fileName"
+            rm  ~/"$location"/AutoEncrypt/"$fileName"
+            echo "encrypted $fileName";
+        done
+}
+
+if  [[ $1 == -a ]]; then
+    notify-send 'Auto Encryption' 'Input directory has been encrypted'
+    encryptDirectory
+
+elif [[ $1 == -f ]]; then
+    echo "Encrypting entirety of AutoEncrypt directory"
+    sleep 1
+    encryptDirectory
 
 elif [[ $1 == -i ]]; then
     echo "This is for an initial setup"
-    existance=$(gpg --list-keys | grep DropBox) 
+    existance=$( gpg --list-keys | grep AutoEncrypt ) 
     if ! [[ $existance ]]; then
         echo "Need to generate a new Public/Private key pairing"
         sleep 1.5
-        gpg --quick-generate-key DropBox [1[1024[0]]]
-        gpg --export -a > theKey.pub
+        cd ~
+        gpg --quick-gen-key AutoEncrypt [1[1024[0]]]
+        gpg --export > theKey.pub
         gpg --import theKey.pub
         rm theKey.pub
     else
-        echo "DropBox Key already exists"
-        sleep 1.5
+        echo "AutoEncrypt Key already exists"
     fi 
 
-    read -p "Please enter the dropbox location: ~/" location
-    echo "location $location" > systemInfo.txt
-    location2=$(cat systemInfo.txt | grep location | cut -c 10-)
-    if [[ -d ~"$location2" ]]; then  
-        echo "Directory Exists"
+    read -p "Please enter the AutoEncrypt location: ~/" location
+    echo "location $location" > dataFile.txt
+    location2=$(cat dataFile.txt | grep location | cut -c 10-)
+    if [[ -d ~/"$location2"/AutoEncrypt ]]; then  
+        echo "AutoEncrypt directory exists in ~/$location2"
     else
-        mkdir ~/"$location2"/DropBox
-        echo "Created dropbox in ~/$location2"
+        mkdir ~/"$location2"/AutoEncrypt
+        echo "Created Directory in ~/$location2"
     fi
 
     if [[ -d "EncryptedFiles" ]]; then
@@ -61,16 +67,18 @@ elif [[ $1 == -i ]]; then
     fi
 
     read -p "Enter Decryption output location: ~/" location
-    if [[ -d ~"$location"/DecryptedFiles ]]; then
-        echo "Directory exists"
+    if [[ -d ~/"$location"/DecryptedFiles ]]; then
+        echo "Decryption directory already exists"
+        echo "destination $location" >> dataFile.txt
+
     else
         mkdir ~/"$location"/DecryptedFiles
-        echo "destination $location" >> systemInfo.txt
+        echo "destination $location" >> dataFile.txt
     fi
 
 else
     clear
-    echo "Welcome, Please select from the following options"
+    echo "Auto-Encryption: Please select from the following options"
     echo "1: Change Keys"
     echo "2: Delete Encryption keys"
     echo "3: Decrypt a file"
@@ -92,6 +100,8 @@ else
         else
             echo "Decryption location not set"
         fi
+    #elif [[ $response == 2 ]]; then
+    
     elif [[ $response == 4 ]]; then
         decryptDirectory
     fi
