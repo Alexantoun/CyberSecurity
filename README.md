@@ -19,3 +19,6 @@ Added a way to choose the destination of the decrypted files but still no way to
 16th February 2022:--
 Can now decrypt the entirety of the holding directory, the decrypted files will be placed into 
 the location specified by the user. 
+
+21st February 2022:--
+Actually fixed the automatic encryption key generation whilst using users passphrase

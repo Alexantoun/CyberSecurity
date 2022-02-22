@@ -26,10 +26,32 @@ function encryptDirectory(){
         done
 }
 
+function makeKey(){
+    passphrase=$(whiptail --title "Need a passphrase" --passwordbox "Please enter a passphrase" 10 60 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [[ $exitstatus = 0 ]]; then
+        echo "%echo Generating a key"> genkey-batch
+        echo "Key-Type: default" >> genkey-batch
+        echo "Subkey-Type: default" >> genkey-batch
+        echo "Name-Real: AutoEncrypt" >> genkey-batch
+        echo "Name-Email: AutoEncrypt@here.com" >> genkey-batch
+        echo "Expire-Date: 0" >> genkey-batch
+        echo "Passphrase: $passphrase" >> genkey-batch
+        echo "%echo done" >> genkey-batch
+        echo Making a key with the batch
+        gpg --batch --gen-key genkey-batch
+    else
+        echo "Operation Cancelled"
+    fi
+}
+
+
 if  [[ $1 == -a ]]; then
     notify-send 'Auto Encryption' 'Input directory has been encrypted'
     encryptDirectory
 
+elif [[ $1 == -t ]]; then
+    makeKey
 elif [[ $1 == -f ]]; then
     echo "Encrypting entirety of AutoEncrypt directory"
     sleep 1
