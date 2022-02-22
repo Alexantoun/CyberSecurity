@@ -22,3 +22,6 @@ the location specified by the user.
 
 21st February 2022:--
 Actually fixed the automatic encryption key generation whilst using users passphrase
+
+22nd February 2022:-- made the decryption file talk to the new encryption method. Decided to delete the 
+piping of the passphrase to gpg -d 

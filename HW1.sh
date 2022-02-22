@@ -2,28 +2,31 @@
 ##you still need to make the generation of keys manual
 
 function decryptDirectory(){
-    location=$(cat systemInfo.txt | grep destination | cut -c 13-)
+    location=$(cat dataFile.txt | grep destination | cut -c 13-)
     cd EncryptedFiles
-    read -p "Please enter Decryption key" key
     for fileName in *; do   
         echo "$fileName is encrypted"
         cat "$fileName"
         echo ""
-        echo key | gpg --output ~/"$location"/DecryptedFiles/"$fileName" -d "$fileName" 
-        rm "$fileName"
+        gpg --output ~/"$location"/DecryptedFiles/"$fileName" -d "$fileName" 
         clear
-        echo "All files decrypted and placed into ~/$location"
     done
+    echo "All files decrypted and placed into ~/$location"
+    gpg-connect-agent reloadagent /bye
+
 }
 
 function encryptDirectory(){
-    location=$(cat systemInfo.txt | grep location | cut -c 10-)
-        cd ~/"$location"/DropBox
-        for fileName in *;do   
-            gpg -o ~/Documents/CyberSecurity/EncryptedFiles/"$fileName" -e "$fileName"
-            rm  ~/"$location"/AutoEncrypt/"$fileName"
-            echo "encrypted $fileName";
-        done
+    location=$(cat dataFile.txt | grep location | cut -c 10-)
+    cd ~/"$location"/AutoEncrypt
+    echo "Trying to encrypt $location"
+    pwd
+    for fileName in *;do   
+        gpg -o ~/Documents/CyberSecurity/EncryptedFiles/"$fileName" -e -r AutoEncrypt "$fileName"
+        rm  ~/"$location"/AutoEncrypt/"$fileName"
+        echo "encrypted $fileName";
+    done
+    gpg-connect-agent reloadagent /bye
 }
 
 function makeKey(){
@@ -40,9 +43,12 @@ function makeKey(){
         echo "%echo done" >> genkey-batch
         echo Making a key with the batch
         gpg --batch --gen-key genkey-batch
+        rm genkey-batch
     else
         echo "Operation Cancelled"
     fi
+    gpg-connect-agent reloadagent /bye
+
 }
 
 
@@ -62,12 +68,9 @@ elif [[ $1 == -i ]]; then
     existance=$( gpg --list-keys | grep AutoEncrypt ) 
     if ! [[ $existance ]]; then
         echo "Need to generate a new Public/Private key pairing"
-        sleep 1.5
-        cd ~
-        gpg --quick-gen-key AutoEncrypt [1[1024[0]]]
-        gpg --export > theKey.pub
-        gpg --import theKey.pub
-        rm theKey.pub
+        sleep 0.5
+        makeKey
+
     else
         echo "AutoEncrypt Key already exists"
     fi 
