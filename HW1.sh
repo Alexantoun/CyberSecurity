@@ -116,8 +116,8 @@ else
                 if [[ -e EncryptedFiles/"$file" ]]; then
                     gpg -o ~/"$location"/DecryptedFiles/"$file" -d EncryptedFiles/"$file"
                     rm EncryptedFiles/"$file"
-                echo "File decrypted in DecryptedFiles Directory"
-                gpg-connect-agent reloadagent /bye
+                    echo "File decrypted in DecryptedFiles Directory"
+                    gpg-connect-agent reloadagent /bye
                 else
                     echo "File not found"
                 fi
