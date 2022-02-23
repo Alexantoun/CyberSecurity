@@ -86,9 +86,12 @@ function initialize(){
 }
 
 if  [[ $1 == -a ]]; then
-    notify-send 'Auto Encryption' 'Input directory has been encrypted'
-    encryptDirectory
-
+    if [[ -e dataFile.txt ]];then 
+        notify-send 'Auto Encryption' 'Input directory has been encrypted'
+        encryptDirectory
+    else
+        notify-send 'Auto Encryption no Initialized' 'AutoEncrypt needs to be initialized'
+    fi
 elif [[ $1 == -f ]]; then
     echo "Encrypting entirety of AutoEncrypt directory"
     sleep 1
