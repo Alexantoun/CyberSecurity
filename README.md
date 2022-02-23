@@ -25,3 +25,8 @@ Actually fixed the automatic encryption key generation whilst using users passph
 
 22nd February 2022:-- made the decryption file talk to the new encryption method. Decided to delete the 
 piping of the passphrase to gpg -d 
+
+
+23rd February 2022:--
+More menu fucntionality, and can initialize when trying to run without sending parameters from the command line
+made a whiptail to decrypt specific files, maybe I can make a menu to choose?? 
