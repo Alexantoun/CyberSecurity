@@ -30,3 +30,6 @@ piping of the passphrase to gpg -d
 23rd February 2022:--
 More menu fucntionality, and can initialize when trying to run without sending parameters from the command line
 made a whiptail to decrypt specific files, maybe I can make a menu to choose?? 
+
+24th February 2022:--
+Continuing work on the menu system but can now reset the program
