@@ -7,12 +7,12 @@ function decryptDirectory(){
         cat "$fileName"
         echo ""
         gpg --output ~/"$location"/DecryptedFiles/"$fileName" -d "$fileName" 
+        rm $fileName
         clear
     done
     echo "All files decrypted and placed into ~/$location"
     gpg-connect-agent reloadagent /bye
     cd ../
-    pwd
 }
 
 function encryptDirectory(){
@@ -86,7 +86,6 @@ function initialize(){
         echo "destination $location" >> dataFile.txt
     fi
 }
-
 if  [[ $1 == -a ]]; then
     if [[ -e dataFile.txt ]];then 
         notify-send 'Auto Encryption' 'Input directory has been encrypted'
@@ -102,64 +101,74 @@ elif [[ $1 == -f ]]; then
 elif [[ $1 == -i ]]; then
     initialize
 else
-    if [[ -e dataFile.txt ]]; then
-        clear
-        echo "Auto-Encryption: Please select from the following options"
-        echo "1: Show Information"
-        echo "2: Decrypt a file"
-        echo "3: Decrypt All files"
-        echo "R: Reset AutoEncryption"
-        echo "q: Quit"
-        read response
-        if [[ $response == 1 ]]; then
-            location=$(cat dataFile.txt | grep location | cut -c 10-)
-            destination=$(cat dataFile.txt | grep destination | cut -c 13-)
-            echo "Encrypting files in $location"
-            echo "Decrypting files to $destination"
-            echo "Using key: $(gpg --list-secret-keys| grep AutoEncrypt | cut -c 15-)"       
-            
-        elif [[ $response == 2 ]]; then
-            file="$(whiptail --title "Choose file" --inputbox "Specify the file to decrypt" 10 60 3>&1 1>&2 2>&3)"
-            location="$(cat dataFile.txt | grep destination | cut -c 13- )"
-            echo "the output location is $location"
-            if [[ -d ~/"$location"/DecryptedFiles ]]; then
-                if [[ -e EncryptedFiles/"$file" ]]; then
-                    gpg -o ~/"$location"/DecryptedFiles/"$file" -d EncryptedFiles/"$file"
-                    rm EncryptedFiles/"$file"
-                    echo "File decrypted in DecryptedFiles Directory"
-                    gpg-connect-agent reloadagent /bye
-                else
-                    echo "File not found"
+    while [[ true ]]; do
+        if [[ -e dataFile.txt ]]; then
+            clear
+            echo "Auto-Encryption: Please select from the following options"
+            echo "1: Show Information"
+            echo "2: Decrypt a file"
+            echo "3: Decrypt All files"
+            echo "R: Reset AutoEncryption"
+            echo "q: Quit"
+            read response
+            if [[ $response == 1 ]]; then
+                clear
+                location=$(cat dataFile.txt | grep location | cut -c 10-)
+                destination=$(cat dataFile.txt | grep destination | cut -c 13-)
+                echo "Encrypting files in ~/$location/AutoEncrypt"
+                echo "Decrypting files to ~/$destination/DecryptedFiles"
+                echo "Using key: $(gpg --list-secret-keys| grep AutoEncrypt | cut -c 15-)"
+                read -p "Done?" response
+                if [[ $response == y ]] || [[ $response == Y ]]; then
+                    clear
                 fi
-            else
-                echo "Decryption location not set"
+              
+            elif [[ $response == 2 ]]; then
+                file="$(whiptail --title "Choose file" --inputbox "Specify the file to decrypt" 10 60 3>&1 1>&2 2>&3)"
+                location="$(cat dataFile.txt | grep destination | cut -c 13- )"
+                echo "the output location is $location"
+                if [[ -d ~/"$location"/DecryptedFiles ]]; then
+                    if [[ -e EncryptedFiles/"$file" ]]; then
+                        gpg -o ~/"$location"/DecryptedFiles/"$file" -d EncryptedFiles/"$file"
+                        rm EncryptedFiles/"$file"
+                        echo "File decrypted in DecryptedFiles Directory"
+                        gpg-connect-agent reloadagent /bye
+                    else
+                        echo "File not found"
+                    fi
+                else
+                    echo "Decryption location not set"
+                fi
+            elif [[ $response == 3 ]]; then
+                decryptDirectory
+            elif [[ $response == 'R' ]]; then
+                message="This will decrypt files to output location, \nand then delete the encryption keys\nAre you sure?"
+                whiptail --title "Warning" --yesno "$message" 10 60 3>&1 1>&2 2>&3
+                if [[ $? = 1 ]]; then
+                    echo "Aborted"
+                else
+                    decryptDirectory
+                    gpg --delete-secret-keys AutoEncrypt
+                    gpg --delete-keys AutoEncrypt
+                    rm dataFile.txt
+                    rm -R EncryptedFiles
+                    echo "Run program again to reinitialize, this will clear in 5 seconds"
+                    sleep 5
+                    clear
+                fi
+            elif [[ $response == 'q' ]]; then
+                clear
+                echo "Goodbye!"
+                exit 0
             fi
-        elif [[ $response == 3 ]]; then
-            decryptDirectory
-        elif [[ $response == 'R' ]]; then
-            message="This will decrypt files to output location, \nand then delete the encryption keys\nAre you sure?"
-            whiptail --title "Warning" --yesno "$message" 10 60 3>&1 1>&2 2>&3
+        else 
+            whiptail --title "Need to initialize AutoEncrypt" --yesno "Do you want to initialize AutoEncrypt?" 10 60 3>&1 1>&2 2>&3
             if [[ $? = 1 ]]; then
                 echo "Aborted"
+                exit 0
             else
-                decryptDirectory
-                gpg --delete-secret-keys AutoEncrypt
-                gpg --delete-keys AutoEncrypt
-                rm dataFile.txt
-                rm -R EncryptedFiles
-                echo "Run program again to reinitialize, this will clear in 5 seconds"
-                sleep 5
-                clear
+                initialize
             fi
-        elif [[ $response == 'q' ]]; then
-            echo "Entered the quit function"
         fi
-    else 
-        whiptail --title "Need to initialize AutoEncrypt" --yesno "Do you want to initialize AutoEncrypt?" 10 60 3>&1 1>&2 2>&3
-        if [[ $? = 1 ]]; then
-            echo "Aborted"
-        else
-            initialize
-        fi
-    fi
+    done
 fi
