@@ -1,35 +1,18 @@
-# CyberSecurity
-Homework Assignment, creating a local dropbox to encrypt files stored into a specified directiory into one holding the encrypted files
+Software uses a symmetric key pairing, and then imports its own .pub. One could move the encrypted files to a new 
+system, and if they know the password, the decryption key will work the same. Can handle multiple types of files
+including PDF,txt, JPEG,PNG. Designed to work with CronJobs for automatic encryption of files that are placed into 
+the chosen drop directory, program can also decrypt (with the password) to the chosen output directory. 
 
-Right now this script will generate an encryption key, allow you to choose location of the dropbox, and
-creates a folder to hold the encrypted files.
+-f will immediately encrypt the directory
+-a use with cronjobs for automatic encrytion and notification
+-i for initialization, however will not work if its already initialized. You need to reset it first
 
-At this stage im still developing a way to force the encryption of the dropbox
+The menu has options to view the preferences set by the user. You can also choose to decrypt a singular file, or
+the entirety of the encrypted directory. Both need the correct passphrase that was set at initialization. Resetting
+the program will also require the passphrase, then it will decrypt everything to the output location, delete its own
+datafile containing user preferences, and then delete the encryption key. You'll automatically be prompted to 
+re-initialize the program. 
 
-"DropBox" is a placeholder name
-
-14th of February 2022:--
-Can now decrypt a specified file by taking the file name from the user and then storing to a directory called
-DecryptedFiles -- will work on allowing the user to specify location of decryption
-
-forced encryption will now encrypt the entire directory, and move them to the encryption location 
-
-Added a way to choose the destination of the decrypted files but still no way to decrypt the entirety of the encrypted directory 
-
-16th February 2022:--
-Can now decrypt the entirety of the holding directory, the decrypted files will be placed into 
-the location specified by the user. 
-
-21st February 2022:--
-Actually fixed the automatic encryption key generation whilst using users passphrase
-
-22nd February 2022:-- made the decryption file talk to the new encryption method. Decided to delete the 
-piping of the passphrase to gpg -d 
-
-
-23rd February 2022:--
-More menu fucntionality, and can initialize when trying to run without sending parameters from the command line
-made a whiptail to decrypt specific files, maybe I can make a menu to choose?? 
-
-24th February 2022:--
-Continuing work on the menu system but can now reset the program
+When running via -a and cronjobs, if the program isnt initialized, you'll be notified, else youll recieve notification 
+that the encryption had taken place. If running very regularly (e.g. per minute) do not allow the display in the cron
+tab. Otherwise the notification can become a nuisance
