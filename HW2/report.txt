@@ -1,0 +1,3 @@
+Commands:--
+1) db_nmap -sV <target_IP_Adr>
+2) nmap -sT <target_IP-Adr>
