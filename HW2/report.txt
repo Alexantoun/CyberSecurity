@@ -17,10 +17,13 @@ Bind Shell Backdoor Detection:--
 6) run
 	At this point I found a hasdump of the shadow file containing passwords of the metasploitable system
 	Now on my own Kali system I use John the ripper to unencrypt the hash
+
 7) john /root/.msf4/loot/20220313155238_default_192.168.56.107_linux.hashes_612050.txt -show
 	The results are stored in /loot/John the Ripper.png
+
 8) search linux shell post
 	found a network configuration dump
+
 9) use 20
 	This one is pretty exciting becuase I found various files and their locations such as routing table,
  	host file, Firewall configurations SSH keys etc. From previous hashdump, I also know the admin password
@@ -42,9 +45,13 @@ Postgresql
 2) use 4
 3) set the options
 4) run
-	Here I had a meterpreter sessions up and running
+	Here I had a meterpreter sessions up and running however none of the meterpreter commands worked, the system was saying
+	that the command wasn't supported by the meterpreter version on the system. I'm not sure if that meant my target system or
+	my local system, or even how to resolve this issue
 
-Most of my attempts at exploiting had failed, realistically only the ftp backdoor worked 
-
+Throughout the assignment I had to lookback at CVE reports constantly to see if something could be exploited, however
+they didn't really tell me how I could exploit them. I may have spent too much time on each vulnerability, rather than
+moving onto the next one. Reaslistically, the severe majority of my attempts had failed, with only the above documented
+attempts getting me anywhere. 
 
 
